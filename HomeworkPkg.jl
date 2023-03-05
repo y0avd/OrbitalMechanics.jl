@@ -6,18 +6,22 @@ Author: Yoav Dekel
 @enum baseUnit SEC KM KG RAD OTHER
 
 # this function prints answers in red text, supports MathJax for Markdown in str input is raw"str"
-function PrettyAns(str::String, ans::Union{String, Number}; unit::baseUnit=OTHER, unit_str::String="", sigfigs::Integer=3)
+function PrettyAns(str::String, ans::Union{String, Number}; unit::baseUnit=OTHER, unit_str::String="", sigfigs::Integer=3, ref::Bool=false)
     if typeof(ans) == String
         ans_str = ans
     else
         if unit == OTHER || length(unit_str) > 0
-            ans_str = string(round(ans,digits=sigfigs))*unit_str
+            ans_str = string(round(ans,digits=sigfigs))
         else
             ans_str = PrettyUnit(ans,unit,sigfigs=sigfigs)
         end
     end
 
-    display("text/markdown", "# "*str*" <b style=color:red;>"*ans_str*"</b>")
+    if ref
+        display("text/markdown", str*" "*ans_str*unit_str)
+    else
+        display("text/markdown", str*" <b style=color:red;>"*ans_str*unit_str*"</b>")
+    end
 end
 
 function PrettyUnit(ans::Number,unit::baseUnit;sigfigs::Integer=3)
