@@ -68,8 +68,6 @@ function Cart2Orbit(μ,cart)
 
     ĥ = h/norm(h)
 
-    println(ĥ)
-
     n = cross(ẑ,ĥ)
 
     if norm(n) != 0
@@ -138,6 +136,29 @@ function RFunction(angle,axis)
 end
 
 # Propagators
+"""
+    This function is an Orbit Propagator for a spacecraft under Keplerian motion
+
+    This must be called with the ODEProblem() function, as it is using the ! syntax with du inside the function
+
+    Inputs: (units are not important as long as consistent)
+        du = vector that is derivative of u vector (relavent for calling in a DifferentialEquations.jl environment)
+        u = vector with components: [r₁,r₂,r₃,v₁,v₂,v₃], the position and velocity vectors (in x y z Cartesian cordinates)
+        μ = magnitude of the Gravitational parameter
+        t = time (relavent for calling in a DifferentialEquations.jl environment)
+"""
+
+function OrbitPropCartesian!(du,u,μ,t)
+    x,y,z = u
+
+    du[1:3] = u[4:6]
+
+    r = sqrt(x^2 + y^2 + z^2)
+
+    du[4] = -μ*x/r^3
+    du[5] = -μ*y/r^3
+    du[6] = -μ*z/r^3
+end
 
 """
     This function is an Orbit Propagator for a spacecraft under J2 perturbations where the force model
